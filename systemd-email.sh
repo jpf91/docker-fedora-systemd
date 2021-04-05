@@ -1,9 +1,8 @@
 #!/bin/sh
 
-HOST=$(hostname -f)
 /usr/sbin/sendmail -t <<ERRMAIL
-To: $SYSTEMD_EMAIL
-From: $1 <root@$HOST>
+To: $MAIL_TO
+From: $1 <root@$MAIL_FROM_DOMAIN>
 Subject: $2 service status
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8

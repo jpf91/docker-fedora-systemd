@@ -40,8 +40,8 @@ ADD 01-start-script.sh /etc/initial-setup.d/01-start-script.sh
 
 ```
 podman run --name systemd -t \
-  -e SYSTEMD_EMAIL=foo@example.com \
-  -h example.com \
+  -e MAIL_TO=foo@example.com \
+  -e MAIL_FROM_DOMAIN=example.com \
   -v $PWD/test/ssmtp.conf:/etc/ssmtp/ssmtp.conf \
   -v $PWD/test/services:/etc/systemd/user-units \
   -v $PWD/test/start:/etc/start-scripts.user.d \
@@ -121,8 +121,8 @@ Container images are configured using parameters passed at runtime (such as thos
 
 | Parameter | Function |
 | :----: | --- |
-| `-e SYSTEMD_EMAIL=foo@example.com` | Address where systemd status emails will be sent to. |
-| `-h example.com` | Domain to use when sending emails for sender. |
+| `-e MAIL_TO=foo@example.com` | Address where systemd status emails will be sent to. |
+| `-e MAIL_FROM_DOMAIN=example.com` | Domain to use when sending emails for sender. |
 | `-t` | In order for logging to work, a terminal needs to be allocated. |
 | ssmtp|
 | `-v /etc/systemd/user-units` | Place systemd service files here. Files will be symlinked to `/etc/systemd/system` once on first container start. See above for an example. |
