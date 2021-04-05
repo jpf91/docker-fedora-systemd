@@ -9,6 +9,7 @@ standalone image to run systemd timers and other units. It provides the followin
 * Disables TTY login
 * Allows running scripts on each container start
 * Allows running scripts on first container start
+* Can send emails
 
 ## Supported Architectures
 
@@ -39,9 +40,11 @@ ADD 01-start-script.sh /etc/initial-setup.d/01-start-script.sh
 
 ```
 podman run --name systemd -t \
-  -v $PWD/test/services:/etc/systemd/user-units
-  -v $PWD/test/start:/etc/start-scripts.user.d
-  -v $PWD/test/setup:/etc/initial-setup.user.d
+  -e SYSTEMD_EMAIL=foo@example.com \
+  -v $PWD/test/ssmtp.conf:/etc/ssmtp/ssmtp.conf \
+  -v $PWD/test/services:/etc/systemd/user-units \
+  -v $PWD/test/start:/etc/start-scripts.user.d \
+  -v $PWD/test/setup:/etc/initial-setup.user.d \
   docker.io/jpf91/fedora-systemd
 ```
 
@@ -84,6 +87,32 @@ test/start/01-echo.sh:
 echo "This is a start script"
 ```
 
+### Sending status emails
+
+This image has `ssmtp` installed which can be used to send status reports. First you have to provide a ssmtp configuration:
+```
+mailhub=smtp.gmail.com:587
+rewriteDomain=gmail.com
+
+# Use SSL/TLS before starting negotiation
+TLS_CA_FILE=/etc/ssl/certs/ca-bundle.crt
+UseTLS=Yes
+UseSTARTTLS=Yes
+AuthUser=username
+AuthPass=password
+AuthMethod=LOGIN
+FromLineOverride=yes
+```
+
+Configure the container using `-e SYSTEMD_EMAIL=foo@example.com` to set the email address to send to.
+Then in your systemd units, add something like the following:
+```ini
+[Unit]
+OnFailure=systemd-email@%n.service
+
+# or to always run after a job succeeded:
+ExecStartPost=/etc/systemd-email.sh systemd %n
+```
 
 ## Parameters
 
@@ -91,7 +120,9 @@ Container images are configured using parameters passed at runtime (such as thos
 
 | Parameter | Function |
 | :----: | --- |
+| `-e SYSTEMD_EMAIL=foo@example.com` | Address where systemd status emails will be sent to. |
 | `-t` | In order for logging to work, a terminal needs to be allocated. |
+| ssmtp|
 | `-v /etc/systemd/user-units` | Place systemd service files here. Files will be symlinked to `/etc/systemd/system` once on first container start. See above for an example. |
 | `-v /etc/start-scripts.user.d` | Place bash scripts here (extension `.sh`) which will be executed at every container start. |
 | `-v /etc/initial-setup.user.d` | Place bash scripts here (extension `.sh`) which will be executed at initial container start. |

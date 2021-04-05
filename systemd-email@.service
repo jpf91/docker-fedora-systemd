@@ -1,0 +1,8 @@
+[Unit]
+Description=Send status email for %i to $SYSTEMD_EMAIL
+
+[Service]
+Type=oneshot
+ExecStart=/etc/systemd-email.sh systemd %i
+User=nobody
+Group=systemd-journal

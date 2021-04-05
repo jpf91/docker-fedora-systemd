@@ -2,7 +2,7 @@
 FROM registry.fedoraproject.org/fedora-minimal:33
 
 RUN microdnf install \
-    systemd && \
+    systemd ssmtp && \
     microdnf clean all
 
 # Forward journal logs to console
@@ -14,8 +14,10 @@ RUN systemctl mask console-getty.service getty@tty1.service
 # Add infrastructure to run setup and start scripts
 ADD initial-setup.service /etc/systemd/system/initial-setup.service
 ADD start-scripts.service /etc/systemd/system/start-scripts.service
+ADD systemd-email@.service /etc/systemd/system/systemd-email@.service
 ADD initial-setup.sh /etc/initial-setup.sh
 ADD start-scripts.sh /etc/start-scripts.sh
+ADD systemd-email.sh /etc/systemd-email.sh
 ADD 00-setup-user-units.sh /etc/initial-setup.d/00-setup-user-units.sh
  
 RUN mkdir -p /etc/initial-setup.d && \
