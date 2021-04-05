@@ -2,7 +2,7 @@
 FROM registry.fedoraproject.org/fedora-minimal:33
 
 RUN microdnf install \
-    systemd ssmtp && \
+    systemd ssmtp hostname && \
     microdnf clean all
 
 # Forward journal logs to console
