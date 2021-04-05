@@ -1,5 +1,5 @@
 [Unit]
-Description=Send status email for %i to $SYSTEMD_EMAIL
+Description=Send status email for %i
 
 [Service]
 Type=oneshot
