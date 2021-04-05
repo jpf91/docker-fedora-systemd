@@ -1,11 +1,17 @@
-#!/bin/sh
+#!/bin/bash
+
+if [ -f /etc/systemd-email.conf ]; then
+    source /etc/systemd-email.conf
+fi
+
+STATUS=$(systemctl is-failed "$2")
 
 /usr/sbin/sendmail -t <<ERRMAIL
 To: $MAIL_TO
 From: $1 <root@$MAIL_FROM_DOMAIN>
-Subject: $2 service status
+Subject: ${STATUS^^}: $2
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
 
-$(systemctl status --full "$2")
+$(systemctl status --full --lines 200 "$2")
 ERRMAIL
