@@ -107,7 +107,8 @@ FromLineOverride=yes
 Configure the container using the systemd-email.conf file to set the email address to send to:
 ```
 MAIL_TO=foo@example.com
-MAIL_FROM_DOMAIN=nas.example.com
+MAIL_FROM_DOMAIN=example.com
+MAIL_FROM_USER=nas
 ```
 
 
